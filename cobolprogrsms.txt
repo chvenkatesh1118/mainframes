@@ -1,0 +1,1730 @@
+VMEMBER NAME  DATE1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. DATE1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 G-1.
+V
+V        02 YYYY PIC 9(4).
+V
+V         88 Y1 VALUE 1950 THRU 2022.
+V
+V        02 MM PIC 9(2).
+V
+V         88 M1 VALUES ARE 01 , 03 , 05 , 07 , 08 , 10 , 12.
+V
+V         88 M2 VALUES ARE 04 , 06 , 11.
+V
+V         88 M3 VALUES ARE 02.
+V
+V        02 DD PIC 9(2).
+V
+V         88 D1 VALUE 1 THRU 31.
+V
+V         88 D2 VALUE 1 THRU 30.
+V
+V         88 D3 VALUE 1 THRU 28.
+V
+V         88 D4 VALUE 1 THRU 29.
+V
+V       01 G-2.
+V
+V        02 YYYY1 PIC 9(4) VALUE 2022.
+V
+V        02 MM1 PIC 9(2) VALUE 11.
+V
+V        02 DD1 PIC 9(2) VALUE 18.
+V
+V       01 D-1 PIC 9(2).
+V
+V       01 M-1 PIC 9(2).
+V
+V       01 Y-1 PIC 9(4).
+V
+V       PROCEDURE DIVISION.
+V
+V             ACCEPT G-1.
+V
+V                IF M1
+V
+V                 IF D1
+V
+V                  DISPLAY 'VALIDE DATE'
+V
+V                  PERFORM DATE-DIFF-PARA
+V
+V                 ELSE
+V
+V                  DISPLAY 'NOT VALIDE DATE'
+V
+V                 END-IF
+V
+V                ELSE IF M2
+V
+V                      IF D2
+V
+V                       DISPLAY 'VALIDE DATE'
+V
+V                       PERFORM DATE-DIFF-PARA
+V
+V                      ELSE
+V
+V                       DISPLAY 'WRONG DATE'
+V
+V                      END-IF
+V
+V                ELSE IF M3
+V
+V                      IF D3
+V
+V                       DISPLAY 'VALID DATE'
+V
+V                       PERFORM DATE-DIFF-PARA
+V
+V                      ELSE
+V
+V                       DISPLAY 'NOT VALIDE'
+V
+V                      END-IF
+V
+V                END-IF.
+V
+V       DATE-DIFF-PARA.
+V
+V               IF DD1 > DD
+V
+V                IF MM1 > MM
+V
+V                  COMPUTE D-1 = DD1 - DD
+V
+V                  COMPUTE M-1 = MM1 - MM
+V
+V                  COMPUTE Y-1 = YYYY1 - YYYY
+V
+V                  PERFORM DATE-DISPLAY-PARA
+V
+V                ELSE
+V
+V                  COMPUTE D-1 = DD1 - DD
+V
+V                  COMPUTE M-1 = MM1 + 12 - MM
+V
+V                  COMPUTE Y-1 = YYYY1 - 1 - YYYY
+V
+V                  PERFORM DATE-DISPLAY-PARA
+V
+V                END-IF
+V
+V               ELSE IF MM1 > MM
+V
+V                     COMPUTE D-1 = DD1 + 30 - DD
+V
+V                     COMPUTE M-1 = MM1 - 1 - MM
+V
+V                     COMPUTE Y-1 = YYYY1 - YYYY
+V
+V                     PERFORM DATE-DISPLAY-PARA
+V
+V                    ELSE
+V
+V                     COMPUTE D-1 = DD1 + 30 - DD
+V
+V                     COMPUTE M-1 = MM1 - 1 + 12 - MM
+V
+V                     COMPUTE Y-1 = YYYY1 - 1 - YYYY
+V
+V                     PERFORM DATE-DISPLAY-PARA
+V
+V                    END-IF
+V
+V               END-IF.
+V
+V         DATE-DISPLAY-PARA.
+V
+V               DISPLAY D-1 '-DAYS ' M-1 '-MONTHS ' Y-1 '-YEARS ' .
+V
+V               STOP RUN.
+V
+VMEMBER NAME  DELPGM
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRTPGM.                                              0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0003100
+V1
+V       FILE-CONTROL.                                                    0004000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0005000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0006000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0007000
+V2
+V            FILE STATUS IS FS.                                          0008000
+V1
+V       DATA DIVISION.                                                   0009000
+V0
+V       FILE SECTION.                                                    0010000
+V0
+V        FD EMP-FILE.                                                    0011000
+V4
+V        01 EMP-REC.                                                     0012000
+V4
+V         02 EID PIC 9(5).                                               0013000
+V4
+V         02 ENAME PIC X(15).                                            0014000
+V4
+V         02 FILLER PIC X(20).                                           0015000
+V4
+V       WORKING-STORAGE SECTION.                                         0016000
+V0
+V       01 FS PIC 9(2).                                                  0017000
+V0
+V       01 I PIC 9(2).                                                   0018000
+V0
+V       PROCEDURE DIVISION.                                              0019000
+V0
+V             PERFORM OPEN-PARA                                          0020000
+V0
+V             PERFORM WRITE-PARA.                                        0021000
+V0
+V             PERFORM CLOSE-PARA.                                        0022000
+V0
+V             STOP RUN.                                                  0023000
+V0
+V       OPEN-PARA.                                                       0024000
+V0
+V             OPEN OUTPUT EMP-FILE.                                      0025000
+V1
+V             DISPLAY "FILE OPEN STATUS CODE:" FS.                       0026000
+V1
+V       WRITE-PARA.                                                      0027000
+V1
+V             ACCEPT EID.                                                0028000
+V1
+V             ACCEPT ENAME.                                              0029000
+V1
+V             WRITE EMP-REC.                                             0030000
+V1
+V             DISPLAY "FILE WRITE STATUS CODE: " FS.                     0031000
+V1
+V       CLOSE-PARA.                                                      0032000
+V1
+V             CLOSE EMP-FILE.                                            0033000
+V3
+V             DISPLAY "FILE CLOSING STATUS CODE"  FS.                    0034000
+V1
+VMEMBER NAME  EXTENPGM
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRTPGM.                                              0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0003100
+V1
+V       FILE-CONTROL.                                                    0004000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0005000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0006000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0007000
+V2
+V            FILE STATUS IS FS.                                          0008000
+V1
+V       DATA DIVISION.                                                   0009000
+V0
+V       FILE SECTION.                                                    0010000
+V0
+V        FD EMP-FILE.                                                    0011000
+V4
+V        01 EMP-REC.                                                     0012000
+V4
+V         02 EID PIC 9(5).                                               0013000
+V4
+V         02 ENAME PIC X(15).                                            0014000
+V4
+V         02 FILLER PIC X(20).                                           0015000
+V4
+V       WORKING-STORAGE SECTION.                                         0016000
+V0
+V       01 FS PIC 9(2).                                                  0017000
+V0
+V       01 I PIC 9(2).                                                   0018000
+V0
+V       PROCEDURE DIVISION.                                              0019000
+V0
+V             PERFORM OPEN-PARA                                          0020000
+V0
+V             PERFORM WRITE-PARA.                                        0021000
+V0
+V             PERFORM CLOSE-PARA.                                        0022000
+V0
+V             STOP RUN.                                                  0023000
+V0
+V       OPEN-PARA.                                                       0024000
+V0
+V             OPEN OUTPUT EMP-FILE.                                      0025000
+V1
+V             DISPLAY "FILE OPEN STATUS CODE:" FS.                       0026000
+V1
+V       WRITE-PARA.                                                      0027000
+V1
+V             ACCEPT EID.                                                0028000
+V1
+V             ACCEPT ENAME.                                              0029000
+V1
+V             WRITE EMP-REC.                                             0030000
+V1
+V             DISPLAY "FILE WRITE STATUS CODE: " FS.                     0031000
+V1
+V       CLOSE-PARA.                                                      0032000
+V1
+V             CLOSE EMP-FILE.                                            0033000
+V3
+V             DISPLAY "FILE CLOSING STATUS CODE"  FS.                    0034000
+V1
+VMEMBER NAME  LASTNAM
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. LASTNAM.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 W-DATA PIC A(45).
+V
+V       01 W-FN PIC A(15).
+V
+V       PROCEDURE SECTION.
+V
+V        ACCEPT W-DATA
+V
+V        W-DATA DELIMITED BY SPACE
+V
+V        INTO W-FN
+V
+V        DISPLAY W-FN
+V
+V        STOP RUN.
+V
+VMEMBER NAME  LENGTH1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. LENGTH1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 A PIC X(50).
+V
+V       01 L PIC 9(2).
+V
+V       01 L1 PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V            ACCEPT A.
+V
+V             INSPECT A TALLYING L FOR  LEADING SPACES.
+V
+V             COMPUTE L1 = LENGTH OF A - L
+V
+V             DISPLAY L1.
+V
+V            DISPLAY 'LENGTH OF GIVEN STRING: ' L1.
+V
+V            STOP RUN.
+V
+VMEMBER NAME  MOVE1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. MOVE1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 GROUP-1.
+V
+V        02 A PIC 9(3).
+V
+V        02 B PIC 9(3).
+V
+V       01 GROUP-2.
+V
+V        02 C PIC 9(3).
+V
+V        02 D PIC 9(3).
+V
+V       PROCEDURE DIVISION.
+V
+V             ACCEPT A
+V
+V             MOVE A TO D
+V
+V             DISPLAY D.
+V
+V             STOP RUN.
+V
+VMEMBER NAME  ODDPRIM
+V       identification division.
+V
+V       PROGRAM-ID. ODDPRIM.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 TABS.
+V
+V        02 N PIC 9(2) OCCURS 15 TIMES.
+V
+V       01 I PIC 9(2).
+V
+V       01 A PIC 9(2).
+V
+V       01 R PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V             PERFORM VARYING I FROM 1 BY 1 UNTIL I > 15
+V
+V             ACCEPT N(I)
+V
+V             DISPLAY N(I)
+V
+V             END-PERFORM.
+V
+V             PERFORM VARYING I FROM  1 BY 1 UNTIL I > 15
+V
+V             DIVIDE N(I) BY 2 GIVING A REMAINDER R
+V
+V             IF R = 0
+V
+V              DISPLAY N(I) "IS EVEN"
+V
+V             ELSE
+V
+V              DISPLAY N(I) "IS ODD"
+V
+V              END-IF.
+V
+V              END-PERFORM.
+V
+V             STOP RUN.
+V
+VMEMBER NAME  PARA
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. PARA.
+V
+V       WORKING-STORAGE SECTION.
+V
+VMEMBER NAME  REDIF
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. REDIF.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 A PIC X(10) VALUE 'CHANTI'.
+V
+V       01 B REDEFINES A PIC X(10).
+V
+V       01 C PIC X(10) VALUE 'VENKATESH' .
+V
+V       01 D REDEFINES C PIC X(10).
+V
+V       PROCEDURE DIVISION.
+V
+V            DISPLAY A
+V
+V            DISPLAY B
+V
+V            DISPLAY C
+V
+V            DISPLAY D
+V
+V            STOP RUN.
+V
+V
+V
+V
+V
+VMEMBER NAME  SAMPLE
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. SAMPLE.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 G-1.
+V
+V        02 A1 PIC X(3) VALUE 123.
+V
+V        02 B1 PIC 9(3) VALUE 456.
+V
+V        02 C1 PIC A(3) VALUE ABC.
+V
+V       01 G-2.
+V
+V        02 A2 PIC A(3).
+V
+V        02 B2 PIC X(3).
+V
+V        02 C2 PIC 9(3).
+V
+V       01 A-DATA PIC X(10) VALUE 12345
+V
+V       01 B-NUM PIC X(10).
+V
+V       01 C PIC X(5).
+V
+V       01 I PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V      ****** SIMPLE  MOVE *********
+V
+V               MOVE 32 TO B-NUM
+V
+V      ******ELIMENTORY MOVE ******
+V
+V               MOVE A-DATA TO B-NUM
+V
+V      ****** GROUP MOVE ***********
+V
+V               MOVE G-1 T0 G-2.
+V
+V      ****** REFERANCE MOVE *******
+V
+V               MOVE A-DATA(1:3) TO B-NUM(2:4)
+V
+V      ****** CORRESPONDING MOVE *****
+V
+V      ******QUALIFIER MOVE **********
+V
+V               MOVE A-DATA TO A2 IN G-2
+V
+V               MOVE A-DATA TO B2 OF G-2.
+V
+V                STOP RUN.
+V
+VMEMBER NAME  SEPRATE
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. SEPRATE.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 WS-DATA PIC X(50).
+V
+V       01 CNT PIC 9(2).
+V
+V       01 CNTU PIC 9(2).
+V
+V       01 CNTL PIC 9(2).
+V
+V       01 CNTI PIC 9(2).
+V
+V       01 P PIC X(50).
+V
+V       01 Q PIC X(50).
+V
+V       01 R PIC X(50).
+V
+V       01 L PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V              ACCEPT WS-DATA.
+V
+V              COMPUTE L = LENGTH OF WS-DATA
+V
+V              PERFORM VARYING CNT FROM 1 BY +1 UNTIL CNT >= L
+V
+V               IF WS-DATA(CNT:1) IS ALPHABETIC-UPPER AND WS-DATA(CNT:1)
+V
+V                                                 NOT EQUAL TO SPACE
+V
+V                MOVE WS-DATA(CNT:1) TO P(CNTU:1)
+V
+V                 ADD 1 TO CNTU
+V
+V               ELSE IF WS-DATA(CNT:1) ALPHABETIC-LOWER AND
+V
+V                                      WS-DATA(CNT:1) NOT EQUAL TO SPACE
+V
+V                MOVE WS-DATA(CNT:1) TO Q(CNTL:1)
+V
+V                 ADD 1 TO CNTL
+V
+V               ELSE IF WS-DATA(CNT:1) NUMERIC AND WS-DATA(CNT:1)
+V
+V                                        NOT EQUAL TO SPACE
+V
+V                 MOVE WS-DATA(CNT:1) TO R(CNTI:1)
+V
+V                 ADD 1 TO CNTI
+V
+V               END-IF
+V
+V               END-IF
+V
+V               END-IF
+V
+V               END-PERFORM.
+V
+V                DISPLAY "UPPERCASES:"   P
+V
+V                DISPLAY "LOWERCASES:"   Q
+V
+V                DISPLAY "INTEGERS:"  R
+V
+V               STOP RUN.
+V
+VMEMBER NAME  SIGN1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. SIGN1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01  A PIC 9(2) VALUE 5.
+V
+V       01  B PIC 9(2) VALUE 8.
+V
+V       01  C PIC  S9(2) VALUE ZEROS.
+V
+V       PROCEDURE DIVISION.
+V
+V             COMPUTE C = A - B
+V
+V             DISPLAY C.
+V
+V             STOP RUN.
+V
+VMEMBER NAME  STRING1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. STRING1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 IN-STRING PIC X(25) VALUE 'MY NAME IS VENKEY'.
+V
+V       01 OUT-STRING PIC X(25).
+V
+V       01 WITH-POINT PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V      *
+V
+V      ************** DELIMITED USING ON STRING ****************
+V
+V      *
+V
+V             MOVE 2 TO WITH-POINT
+V
+V             STRING  IN-STRING DELIMITED BY SPACE
+V
+V             '@' DELIMITED BY SIZE
+V
+V             INTO OUT-STRING
+V
+V             WITH POINTER WITH-POINT
+V
+V             DISPLAY OUT-STRING.
+V
+V             STOP RUN.
+V
+VMEMBER NAME  SWTEID
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRTPGM.                                              0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0003100
+V1
+V       FILE-CONTROL.                                                    0004000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0005000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0006000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0007000
+V2
+V            FILE STATUS IS FS.                                          0008000
+V1
+V       DATA DIVISION.                                                   0009000
+V0
+V       FILE SECTION.                                                    0010000
+V0
+V        FD EMP-FILE.                                                    0011000
+V4
+V        01 EMP-REC.                                                     0012000
+V4
+V         02 EID PIC 9(5).                                               0013000
+V4
+V         02 ENAME PIC X(15).                                            0014000
+V4
+V         02 FILLER PIC X(20).                                           0015000
+V4
+V       WORKING-STORAGE SECTION.                                         0016000
+V0
+V       01 FS PIC 9(2).                                                  0017000
+V0
+V       01 I PIC 9(2).                                                   0018000
+V0
+V       PROCEDURE DIVISION.                                              0019000
+V0
+V             PERFORM OPEN-PARA                                          0020000
+V0
+V             PERFORM WRITE-PARA.                                        0021000
+V0
+V             PERFORM CLOSE-PARA.                                        0022000
+V0
+V             STOP RUN.                                                  0023000
+V0
+V       OPEN-PARA.                                                       0024000
+V0
+V             OPEN OUTPUT EMP-FILE.                                      0025000
+V1
+V             DISPLAY "FILE OPEN STATUS CODE:" FS.                       0026000
+V1
+V       WRITE-PARA.                                                      0027000
+V1
+V             ACCEPT EID.                                                0028000
+V1
+V             ACCEPT ENAME.                                              0029000
+V1
+V             WRITE EMP-REC.                                             0030000
+V1
+V             DISPLAY "FILE WRITE STATUS CODE: " FS.                     0031000
+V1
+V       CLOSE-PARA.                                                      0032000
+V1
+V             CLOSE EMP-FILE.                                            0033000
+V3
+V             DISPLAY "FILE CLOSING STATUS CODE"  FS.                    0034000
+V1
+VMEMBER NAME  SWTENAM
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRTPGM.                                              0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0003100
+V1
+V       FILE-CONTROL.                                                    0004000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0005000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0006000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0007000
+V2
+V            FILE STATUS IS FS.                                          0008000
+V1
+V       DATA DIVISION.                                                   0009000
+V0
+V       FILE SECTION.                                                    0010000
+V0
+V        FD EMP-FILE.                                                    0011000
+V4
+V        01 EMP-REC.                                                     0012000
+V4
+V         02 EID PIC 9(5).                                               0013000
+V4
+V         02 ENAME PIC X(15).                                            0014000
+V4
+V         02 FILLER PIC X(20).                                           0015000
+V4
+V       WORKING-STORAGE SECTION.                                         0016000
+V0
+V       01 FS PIC 9(2).                                                  0017000
+V0
+V       01 I PIC 9(2).                                                   0018000
+V0
+V       PROCEDURE DIVISION.                                              0019000
+V0
+V             PERFORM OPEN-PARA                                          0020000
+V0
+V             PERFORM WRITE-PARA.                                        0021000
+V0
+V             PERFORM CLOSE-PARA.                                        0022000
+V0
+V             STOP RUN.                                                  0023000
+V0
+V       OPEN-PARA.                                                       0024000
+V0
+V             OPEN OUTPUT EMP-FILE.                                      0025000
+V1
+V             DISPLAY "FILE OPEN STATUS CODE:" FS.                       0026000
+V1
+V       WRITE-PARA.                                                      0027000
+V1
+V             ACCEPT EID.                                                0028000
+V1
+V             ACCEPT ENAME.                                              0029000
+V1
+V             WRITE EMP-REC.                                             0030000
+V1
+V             DISPLAY "FILE WRITE STATUS CODE: " FS.                     0031000
+V1
+V       CLOSE-PARA.                                                      0032000
+V1
+V             CLOSE EMP-FILE.                                            0033000
+V3
+V             DISPLAY "FILE CLOSING STATUS CODE"  FS.                    0034000
+V1
+VMEMBER NAME  UPDEID
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRTPGM.                                              0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0003100
+V1
+V       FILE-CONTROL.                                                    0004000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0005000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0006000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0007000
+V2
+V            FILE STATUS IS FS.                                          0008000
+V1
+V       DATA DIVISION.                                                   0009000
+V0
+V       FILE SECTION.                                                    0010000
+V0
+V        FD EMP-FILE.                                                    0011000
+V4
+V        01 EMP-REC.                                                     0012000
+V4
+V         02 EID PIC 9(5).                                               0013000
+V4
+V         02 ENAME PIC X(15).                                            0014000
+V4
+V         02 FILLER PIC X(20).                                           0015000
+V4
+V       WORKING-STORAGE SECTION.                                         0016000
+V0
+V       01 FS PIC 9(2).                                                  0017000
+V0
+V       01 I PIC 9(2).                                                   0018000
+V0
+V       PROCEDURE DIVISION.                                              0019000
+V0
+V             PERFORM OPEN-PARA                                          0020000
+V0
+V             PERFORM WRITE-PARA.                                        0021000
+V0
+V             PERFORM CLOSE-PARA.                                        0022000
+V0
+V             STOP RUN.                                                  0023000
+V0
+V       OPEN-PARA.                                                       0024000
+V0
+V             OPEN OUTPUT EMP-FILE.                                      0025000
+V1
+V             DISPLAY "FILE OPEN STATUS CODE:" FS.                       0026000
+V1
+V       WRITE-PARA.                                                      0027000
+V1
+V             ACCEPT EID.                                                0028000
+V1
+V             ACCEPT ENAME.                                              0029000
+V1
+V             WRITE EMP-REC.                                             0030000
+V1
+V             DISPLAY "FILE WRITE STATUS CODE: " FS.                     0031000
+V1
+V       CLOSE-PARA.                                                      0032000
+V1
+V             CLOSE EMP-FILE.                                            0033000
+V3
+V             DISPLAY "FILE CLOSING STATUS CODE"  FS.                    0034000
+V1
+VMEMBER NAME  UPENAME
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRTPGM.                                              0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0003100
+V1
+V       FILE-CONTROL.                                                    0004000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0005000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0006000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0007000
+V2
+V            FILE STATUS IS FS.                                          0008000
+V1
+V       DATA DIVISION.                                                   0009000
+V0
+V       FILE SECTION.                                                    0010000
+V0
+V        FD EMP-FILE.                                                    0011000
+V4
+V        01 EMP-REC.                                                     0012000
+V4
+V         02 EID PIC 9(5).                                               0013000
+V4
+V         02 ENAME PIC X(15).                                            0014000
+V4
+V         02 FILLER PIC X(20).                                           0015000
+V4
+V       WORKING-STORAGE SECTION.                                         0016000
+V0
+V       01 FS PIC 9(2).                                                  0017000
+V0
+V       01 I PIC 9(2).                                                   0018000
+V0
+V       PROCEDURE DIVISION.                                              0019000
+V0
+V             PERFORM OPEN-PARA                                          0020000
+V0
+V             PERFORM WRITE-PARA.                                        0021000
+V0
+V             PERFORM CLOSE-PARA.                                        0022000
+V0
+V             STOP RUN.                                                  0023000
+V0
+V       OPEN-PARA.                                                       0024000
+V0
+V             OPEN OUTPUT EMP-FILE.                                      0025000
+V1
+V             DISPLAY "FILE OPEN STATUS CODE:" FS.                       0026000
+V1
+V       WRITE-PARA.                                                      0027000
+V1
+V             ACCEPT EID.                                                0028000
+V1
+V             ACCEPT ENAME.                                              0029000
+V1
+V             WRITE EMP-REC.                                             0030000
+V1
+V             DISPLAY "FILE WRITE STATUS CODE: " FS.                     0031000
+V1
+V       CLOSE-PARA.                                                      0032000
+V1
+V             CLOSE EMP-FILE.                                            0033000
+V3
+V             DISPLAY "FILE CLOSING STATUS CODE"  FS.                    0034000
+V1
+VMEMBER NAME  EXTNDPG
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. REDPGM.                                              0002000
+V5
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0003100
+V1
+V       FILE-CONTROL.                                                    0004000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0005000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0006000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0007000
+V2
+V            FILE STATUS IS FS.                                          0008000
+V1
+V       DATA DIVISION.                                                   0009000
+V0
+V       FILE SECTION.                                                    0010000
+V0
+V        FD EMP-FILE.                                                    0011000
+V4
+V        01 EMP-REC.                                                     0012000
+V4
+V         02 EID PIC 9(5).                                               0013000
+V4
+V         02 ENAME PIC X(15).                                            0014000
+V4
+V         02 FILLER PIC X(20).                                           0015000
+V4
+V       WORKING-STORAGE SECTION.                                         0016000
+V0
+V       01 FS PIC 9(2).                                                  0017000
+V0
+V       01 I PIC 9(2).                                                   0018000
+V0
+V       PROCEDURE DIVISION.                                              0019000
+V0
+V             PERFORM OPEN-PARA                                          0020000
+V0
+V             PERFORM READ-PARA.                                         0021000
+V7
+V             PERFORM CLOSE-PARA.                                        0022000
+V0
+V             STOP RUN.                                                  0023000
+V0
+V       OPEN-PARA.                                                       0024000
+V0
+V             OPEN INPUT EMP-FILE.                                       0025000
+V5
+V             DISPLAY "FILE OPEN STATUS CODE:" FS.                       0026000
+V1
+V       READ-PARA.                                                       0027000
+V5
+V             READ EMP-FILE                                              0028000
+V5
+V             AT END                                                     0028101
+V0
+V             DISPLAY "COMPLETED"                                        0028201
+V0
+V             NOT AT END                                                 0029001
+V0
+V             DISPLAY "RECORD FOUND" EID "," ENAME                       0029101
+V1
+V             DISPLAY "COMPLETED:"                                       0030000
+V5
+V             END-READ                                                   0031000
+V9
+V             DISPLAY "READ STATUS: " FS.                                0031100
+V5
+V       CLOSE-PARA.                                                      0032000
+V1
+V             CLOSE EMP-FILE.                                            0033000
+V3
+V             DISPLAY "FILE CLOSING STATUS CODE"  FS.                    0034000
+V1
+VMEMBER NAME  WRTPGM
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRTPGM.                                              0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0004000
+V0
+V       FILE-CONTROL.                                                    0005000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0006000
+V0
+V            ORGANIZATION IS INDEXED                                     0007000
+V0
+V            ACCESS MODE IS SEQUENTIAL                                   0008000
+V2
+V            RECORD KEY IS EID                                           0009000
+V0
+V            FILE STATUS IS FS.                                          0010000
+V5
+V       DATA DIVISION.                                                   0011000
+V3
+V       FILE SECTION.                                                    0012000
+V3
+V       FD EMP-FILE.                                                     0013000
+V3
+V       01 EMP-REC.                                                      0014000
+V3
+V        02 EID PIC X(5).                                                0015000
+V6
+V        02 FILLER PIC X(1).                                             0016000
+V3
+V        02 ENAME PIC X(15).                                             0017000
+V3
+V        02 FILLER PIC X(19).                                            0018000
+V9
+V        WORKING-STORAGE SECTION.                                        0019000
+V3
+V        01 I PIC 9(2).                                                  0020000
+V3
+V        01 FS PIC 9(2).                                                 0020100
+V4
+V        PROCEDURE DIVISION.                                             0021000
+V3
+V            PERFORM OPEN-PARA.                                          0022000
+V0
+V            PERFORM WRITE-PARA VARYING I FROM 1 BY 1 UNTIL I > 5.       0023000
+V1
+V            PERFORM CLOSE-PARA.                                         0024000
+V0
+V              STOP RUN.                                                 0025000
+V3
+V        OPEN-PARA.                                                      0026000
+V3
+V             OPEN OUTPUT EMP-FILE                                       0027000
+V0
+V             DISPLAY "FILE STATUS CODE:" FS.                            0028000
+V8
+V        WRITE-PARA.                                                     0029000
+V3
+V              ACCEPT EID                                                0030001
+V1
+V              ACCEPT ENAME                                              0030101
+V1
+V              WRITE EMP-REC                                             0031000
+V3
+V              DISPLAY "F.STATUS.CODE: " FS.                             0032000
+V8
+V          CLOSE-PARA.                                                   0033000
+V3
+V              CLOSE EMP-FILE                                            0034000
+V3
+V              DISPLAY "CLSOE STATUS: " FS.                              0035001
+V0
+VMEMBER NAME  PAN01
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. PAN01.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 A PIC X(12).
+V
+V       01 L PIC 9(2).
+V
+V       01 R PIC 9(2).
+V
+V       01 CNT PIC 9(2).
+V
+V       01 CNT2 PIC 9(2).
+V
+V       01 I PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V            ACCEPT A
+V
+V            COMPUTE L = LENGTH OF A
+V
+V            PERFORM VARYING I FROM L BY -1 UNTIL A(I:1) IS NOT EQUAL
+V
+V                                                          SPACE
+V
+V                    ADD 1 TO CNT
+V
+V            END-PERFORM
+V
+V            COMPUTE R = L - CNT
+V
+V            INSPECT A TALLYING CNT2 FOR ALL " "
+V
+V            IF R = 10
+V
+V             PERFORM PAN-PARA
+V
+V            ELSE
+V
+V             DISPLAY "PAN NUM MUST BE 10 DIGIT "
+V
+V            END-IF.
+V
+V            STOP RUN.
+V
+V       PAN-PARA.
+V
+V             IF A(1:5) IS ALPHABETIC-UPPER AND A(6:4) IS NUMERIC AND
+V
+V                                         A(10:1) IS ALPHABETIC-UPPER
+V
+V
+V
+V               IF CNT2 = 2
+V
+V                 DISPLAY "PAN NUM: " A
+V
+V               ELSE
+V
+V                  DISPLAY "PLEASE ENTER VALID PAN"
+V
+V             END-IF
+V
+V             END-IF.
+V
+VMEMBER NAME  REVER
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. REVER.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 STR PIC X(10) VALUE "JAYANTHISV".
+V
+V       01 I PIC 9(2).
+V
+V       01 L PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V             COMPUTE L = LENGTH OF STR
+V
+V             PERFORM STR-PARA VARYING I FROM L BY -1 UNTIL I < 1
+V
+V             STOP RUN.
+V
+V       STR-PARA.
+V
+V              DISPLAY STR(1:I).
+V
+VMEMBER NAME  JCLPS
+V//IBMUSSERP  JOB  NOTIFU=SYSUID
+V
+V//STEP1     EXEC  PGM=IEFBR14
+V
+V//DD1       DD    DSN=V.VSAM.PS5,DSIP=(NEW,CATLG,DELETE),
+V
+V                  DCB=(LRECL=
+V
+VMEMBER NAME  COUNT1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. COUNT1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 STRN PIC X(50).
+V
+V       01 CNT PIC 9(2).
+V
+V       01 CHAR PIC 9(2).
+V
+V       01 L PIC 9(2).
+V
+V       01 I PIC 9(2).
+V
+V       01 SPL PIC 9(2).
+V
+V       01 SL PIC 9(2).
+V
+V       PROCEDURE DIVISION.
+V
+V             ACCEPT STRN
+V
+V             COMPUTE L = LENGTH OF STRN
+V
+V             INSPECT STRN TALLYING CNT FOR ALL " "
+V
+V             PERFORM VARYING I FROM L BY -1 UNTIL STRN(I:1)
+V
+V                                       IS NOT EQUAL TO SPACE
+V
+V                MOVE I TO SPL
+V
+V             END-PERFORM
+V
+V              COMPUTE CHAR = L - CNT
+V
+V              COMPUTE SL = SPL - CHAR - 1
+V
+V              DISPLAY "SPACES IN GIVEN STRING:" SL
+V
+V              DISPLAY "CHARAT IN GIVEN STRING:" CHAR.
+V
+V              STOP RUN.
+V
+VMEMBER NAME  NUMAS
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. NUMAS.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE  SECTION.
+V
+V       01 NUM.
+V
+V        02 N PIC 9(3) OCCURS 3 TIMES.
+V
+V       01 I PIC 9(2).
+V
+V       01 J PIC 9(2) VALUE 1.
+V
+V       PROCEDURE DIVISION.
+V
+V            PERFORM VARYING I FROM 1 BY 1 UNTIL I > 3
+V
+V            ACCEPT N(I)
+V
+V            END-PERFORM.
+V
+V            PERFORM LOGIC-PARA 3 TIMES.
+V
+V            STOP RUN.
+V
+V       LOGIC-PARA.
+V
+V            IF N(J) > N(J + 1)
+V
+V             DISPLAY N(J)
+V
+V            ELSE
+V
+V             DISPLAY N(J + 1)
+V
+V             ADD 1 TO J
+V
+V            END-IF.
+V
+V
+V
+VMEMBER NAME  EVAL
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. EVAL.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 A PIC 9(2) VALUE 10.
+V
+V       01 B PIC 9(2) VALUE 20.
+V
+V       01 C PIC 9(2) VALUE 30.
+V
+V       PROCEDURE DIVISION.
+V
+V            EVALUATE TRUE
+V
+V            WHEN A > B
+V
+V            DISPLAY A
+V
+V            WHEN B > C
+V
+V            DISPLAY B
+V
+V            WHEN C > A
+V
+V            DISPLAY C
+V
+V            STOP RUN.
+V
+VMEMBER NAME  OCCRS
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. OCCRS.                                               0002000
+V0
+V       DATA DIVISION.                                                   0003000
+V0
+V       WORKING-STORAGE SECTION.                                         0004000
+V0
+V       01 EMP.                                                          0005000
+V0
+V        02 EMPI PIC X(15) OCCURS 3 TIMES.                               0006000
+V1
+V        02 EMPN PIC X(15) OCCURS 3 TIMES.                               0007000
+V3
+V       01 I PIC 9(2).                                                   0007100
+V4
+V       PROCEDURE DIVISION.                                              0008000
+V1
+V              PERFORM VARYING I FROM 1 BY 1 UNTIL I > 3                 0008100
+V4
+V              ACCEPT EMPI(I)                                            0009000
+V1
+V              ACCEPT EMPN(I)                                            0009100
+V1
+V              DISPLAY EMPI(I)                                           0010000
+V1
+V              DISPLAY EMPN(I)                                           0010100
+V6
+V              END-PERFORM.                                              0010200
+V5
+V              STOP RUN.                                                 0011000
+V1
+VMEMBER NAME  CPLIB
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. CPLIB.                                               0002000
+V0
+V       DATA DIVISION.                                                   0003000
+V0
+V       WORKING-STORAGE SECTION.                                         0004000
+V0
+V               COPY M1.                                                 0005000
+V2
+V               COPY M1 REPLACING G-1 BY G-2.                            0005100
+V4
+V       PROCEDURE DIVISION.                                              0006000
+V0
+V      *         ACCEPT A                                                0006100
+V5
+V      **        ACCEPT B                                                0006200
+V5
+V      *         ACCEPT C                                                0006300
+V5
+V      *         ACCEPT D                                                0006400
+V5
+V      *         DISPLAY A                                               0007000
+V5
+V      *         DISPLAY B                                               0008000
+V5
+V      *         DISPLAY C                                               0009000
+V5
+V      *         DISPLAY D                                               0010000
+V5
+V                ACCEPT G-1                                              0010010
+V5
+V                DISPLAY G-2                                             0010100
+V4
+V                DISPLAY G-1                                             0010200
+V6
+V                STOP RUN.                                               0011000
+V1
+VMEMBER NAME  WRK
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. WRK.                                                 0002000
+V0
+V       DATA DIVISION.                                                   0003000
+V0
+V       WORKING-STORAGE SECTION.                                         0004000
+V0
+V       01 A PIC 9(9) VALUE 123454321.                                   0005000
+V8
+V       01 I PIC 9(2).                                                   0006000
+V0
+V       01 J PIC 9(2).                                                   0007000
+V0
+V       01 K PIC 9(2).                                                   0007102
+V3
+V       01 L PIC 9(2).                                                   0007204
+V3
+V       01 M PIC 9(2).                                                   0007301
+V4
+V       PROCEDURE DIVISION.                                              0008000
+V0
+V              PERFORM VARYING I FROM 1 BY 1 UNTIL I > 3                 0009004
+V1
+V               AND  J FROM 7 BY -2 UNTIL J < 3                          0010004
+V2
+V              MOVE SPACES TO A(I:J)                                     0010243
+V7
+V              DISPLAY A(1:9)                                            0010252
+V1
+V              END-PERFORM.                                              0010263
+V9
+V              STOP RUN.                                                 0010293
+V3
+VMEMBER NAME  A1D
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. A1D.                                                 0002000
+V0
+V       DATA DIVISION.                                                   0003000
+V0
+V       WORKING-STORAGE SECTION.                                         0004000
+V0
+V       01 STD.                                                          0005000
+V5
+V        02 STDREC  OCCURS 2 TIMES.                                      0006000
+V0
+V         03 STDI PIC X(15).                                             0007000
+V6
+V         03 STDN OCCURS 2 TIMES.                                        0008000
+V5
+V          04 FN PIC X(15) .                                             0008100
+V6
+V          04 LN PIC X(15) .                                             0008200
+V6
+V          04 AD OCCURS 2 TIMES.                                         0008300
+V5
+V           05 PA OCCURS 2 TIMES.                                        0008400
+V5
+V            06 VIL PIC X(20) .                                          0008410
+V6
+V            06 PINC PIC 9(5) .                                          0008420
+V6
+V           05 TA OCCURS 2 TIMES.                                        0008500
+V5
+V            07 VIL PIC X(20) .                                          0008600
+V6
+V            07 PINC PIC 9(5) .                                          0008700
+V6
+V       PROCEDURE DIVISION.                                              0009000
+V1
+V             ACCEPT STDI(1)                                             0010000
+V9
+V             ACCEPT STDI(2)                                             0010100
+V9
+V           DISPLAY STD.                                                 0011001
+V0
+V           STOP RUN.                                                    0012000
+V0
+VMEMBER NAME  JCLRUN
+V//IBMUSERP JOB   NOTIFY=&SYSUID
+V
+V//JOBLIB   DD    DSN=COBOL.LIBRARY,DISP=SHR
+V
+V//STEP     EXEC  PGM=SUBIND
+V
+V//SYSOUT   DD    SYSOUT=*
+V
+V//SYSPRINT DD    SYSOUT=*
+V
+V//SYSIN    DD *
+V
+VNAME1
+V
+VNAME2
+V
+VNAME3
+V
+VNAME4
+V
+VNAME5
+V
+V/*
+V
+V//
+V
+VMEMBER NAME  SUBIND
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. SUBIND.                                              0002000
+V0
+V       DATA DIVISION.                                                   0003000
+V0
+V       WORKING-STORAGE SECTION.                                         0004000
+V0
+V       01 EMPT.                                                         0005000
+V0
+V        02 EMPDAT OCCURS 5 TIMES .                                      0006000
+V0
+V         03 EMPN OCCURS 2 TIMES.                                        0007000
+V2
+V          04 FN PIC X(15).                                              0008000
+V0
+V          04 LN PIC X(15).                                              0009000
+V0
+V         03 EMPADRS OCCURS 2 TIMES.                                     0010000
+V1
+V          05 PA OCCURS 2 TIMES.                                         0011000
+V0
+V           06 ADDR PIC X(15).                                           0012000
+V0
+V           06 PIN PIC 9(15).                                            0012100
+V0
+V          05 TA OCCURS 2 TIMES.                                         0013000
+V0
+V            07 ADDR PIC X(15).                                          0014000
+V0
+V            07 PIN PIC 9(15).                                           0016000
+V0
+V       01 I PIC 9(2).                                                   0016100
+V4
+V       01 J PIC 9(2).                                                   0016200
+V4
+V       PROCEDURE DIVISION.                                              0017000
+V0
+V                PERFORM VARYING I FROM 1 BY 1 UNTIL I > 5               0017100
+V3
+V                ACCEPT EMPDAT(I)                                        0017200
+V3
+V                DISPLAY EMPT                                            0018000
+V6
+V                END-PERFORM.                                            0019000
+V5
+V               STOP RUN.                                                0020000
+V0
+VMEMBER NAME  GOEXITST
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. GOEXITST.                                            0002000
+V0
+V       DATA DIVISION                                                    0003000
+V0
+V       WORKING-STORAGE SECTION.                                         0004000
+V0
+V       01 A PIC X(3) VALUE 1.                                           0005000
+V0
+V       01 A PIC X(3) VALUE 2.                                           0006000
+V0
+V       01 A PIC X(3) VALUE 3.                                           0007000
+V0
+V       01 A PIC X(3) VALUE 4.                                           0008000
+V0
+V       PROCEDURE DIVISION.                                              0009000
+V0
+V                DISPLAY "STOP-RUN".                                     0010000
+V0
+V                STOP RUN.                                               0011000
+V0
+V       ONE-PARA.                                                        0012000
+V0
+V                 DISPLAY "PARA".                                        0013000
+V0
+VMEMBER NAME  MAINP
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. MAINP.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       01 M-1 PIC X(2) VALUE M-1.
+V
+V       02 M-2 PIC X(2) VALUE M-2.
+V
+V       PROCEDURE DIVISION.
+V
+V             DISPLAY M-1
+V
+V             DISPLAY M-2
+V
+V             STOP RUN.
+V
+VMEMBER NAME  XCOB
+V//IBMUSERX JOB NOTIFY=&SYSUID,REGION=4M                                 JOB0360
+V6
+V//*
+V
+V//*
+V
+V//*                    COBOL COMPILER
+V
+V//*
+V
+V//*
+V
+V//PROC1   PROC SRCLIB=,
+V
+V//        COPYLIB=,
+V
+V//        LOADLIB=,
+V
+V//        PGMNAME=
+V
+V//*
+V
+V//COMPILE EXEC PGM=IGYCRCTL,PARM=(LIB,LIST)
+V
+V//*
+V
+V//SYSIN    DD  DSN=&SRCLIB(&PGMNAME),DISP=SHR
+V
+V//SYSLIB   DD  DSN=&COPYLIB,DISP=SHR
+V
+V//SYSLIN   DD  DSNAME=&&LOADSET,UNIT=SYSDA,
+V
+V//             DISP=(MOD,PASS),SPACE=(TRK,(5,3),RLSE),
+V
+V//             DCB=(BLKSIZE=3200)
+V
+V//*
+V
+V//SYSPRINT DD  SYSOUT=*
+V
+V//SYSUT1   DD  UNIT=SYSDA,SPACE=(TRK,(3,2))
+V
+V//SYSUT2   DD  UNIT=SYSDA,SPACE=(TRK,(3,2))
+V
+V//SYSUT3   DD  UNIT=SYSDA,SPACE=(TRK,(3,2))
+V
+V//SYSUT4   DD  UNIT=SYSDA,SPACE=(TRK,(3,2))
+V
+V//SYSUT5   DD  UNIT=SYSDA,SPACE=(TRK,(3,2))
+V
+V//SYSUT6   DD  UNIT=SYSDA,SPACE=(TRK,(3,2))
+V
+V//SYSUT7   DD  UNIT=SYSDA,SPACE=(TRK,(3,2))
+V
+V//*
+V
+V//*
+V
+V//LINKED  EXEC PGM=HEWL,COND=(4,LT),PARM='XREF'
+V
+V//*
+V
+V//SYSLIN   DD  DSN=&&LOADSET,DISP=(OLD,DELETE)
+V
+V//SYSLIB   DD  DSN=&LOADLIB,DISP=SHR
+V
+V//         DD  DSN=CEE.SCEELKED,DISP=SHR
+V
+V//SYSLMOD  DD  DSN=&LOADLIB(&PGMNAME),DISP=SHR
+V
+V//*
+V
+V//SYSPRINT DD  SYSOUT=*
+V
+V//SYSUT1   DD  UNIT=SYSDA,SPACE=(TRK,(3,2)),DISP=NEW
+V
+V//*
+V
+V//PROC1   PEND
+V
+V//*
+V
+V//*
+V
+V//STEP1  EXEC PROC1,
+V
+V//       SRCLIB=V.COBOL.PDS,            CHANGE TO YOUR SRCLIB
+V
+V//      COPYLIB=V.COPYLIB,       CHANGE TO YOUR COPYLIB
+V
+V//      LOADLIB=COBOL.LIBRARY,            CHANGE TO YOUR LOADLIB
+V
+V//      PGMNAME=SUBP                CHANGE TO YOUR PROGRAM NAME
+V
+VMEMBER NAME  SUBP
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. SUBP.
+V
+V       DATA DIVISION.
+V
+V       LINKAGE SECTION.
+V
+V       01 G-1.
+V
+V        02 S-1 PIC X(3) VALUE S-1.
+V
+V        02 S-2 PIC X(3) VALUE S-2.
+V
+V       PROCEDURE DIVISION.
+V
+V              DISPLAY S-1
+V
+V              DISPLAY S-2
+V
+V              STOP RUN.
+V
+V
+V
+
