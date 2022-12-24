@@ -1,0 +1,526 @@
+VMEMBER NAME  VENKYJCL
+V//IBMUSERP JOB NOTIFY=&SYSUID
+V
+V//STEP1    EXEC PGM=IEFBR14
+V
+V//DD1      DD   DSN=VENKYJC.PS,DISP=(NEW,CATLG,DELETE),
+V
+V//              SPACE=(TRK,(10,10,0),RLSE),UNIT=SYSDA,
+V
+V//              DCB=(RECFM=FB,LRECL=40,BLKSIZE=400,DSORG=PS)
+V
+V//SYSPRINT DD   SYSOUT=*
+V
+V//SYSOUT   DD   SYSOUT=*
+V
+V//SYSIN    DD   *
+V
+V/*
+V
+V//
+V
+VMEMBER NAME  IEHLIST
+V//IBMUSERP JOB NOTIFY=&SYSUID
+V
+V//*
+V
+V//STEP1    EXEC PGM=IEBCOPY
+V
+V//DD1      DD   DSN=V.LAB1.PDS,DISP=SHR
+V
+V//DD2      DD   DSN=V.LAB2.PDS,DISP=SHR
+V
+V//SYSPRINT DD   SYSOUT=*
+V
+V//SYSOUT   DD   SYSOUT=*
+V
+V//SYSYIN   DD   *
+V
+V  COPU
+V
+V/*
+V
+V//
+V
+VMEMBER NAME  IEBEDIT
+VMEMBER NAME  IEHPROG
+VMEMBER NAME  GDGMEM
+V//IBMUSERP JOB NOTIFY=IBMUSER                                           0001000
+V0
+V//STEP1    EXEC PGM=IDCAMS                                              0002000
+V0
+V//SYSPRINT DD  SYSOUT=*                                                 0005000
+V0
+V//SYSOUT   DD  SYSOUT=*                                                 0006000
+V0
+V//SYSIN    DD  *                                                        0007000
+V0
+V  DEFINE GDG(NAME(V.VENKEY.GDG) -                                       0008000
+V0
+V  LIMIT(3) -                                                            0009000
+V0
+V  EMPTY -                                                               0010000
+V0
+V  NOSCRATCH)                                                            0011000
+V0
+V/*                                                                      0012000
+V0
+V//                                                                      0013000
+V0
+VMEMBER NAME  GDGDELET
+V//****************  JCL TO DELETE GDG BASE ************                 0000100
+V1
+V//IBMUSERP JOB NOTIFY=IBMUSER                                           0001000
+V0
+V//STEP1    EXEC PGM=IDCAMS                                              0002000
+V0
+V//*                                                                     0003000
+V0
+V//SYSPRINT DD  SYSOUT=*                                                 0004000
+V0
+V//SYSOUT   DD  SYSOUT=*                                                 0005000
+V0
+V//SYSIN    DD  *                                                        0006000
+V0
+V  DELETE V.VENKEY.GDG FORCE /* IF WE DONT GIVE RETENTION PERIOD         0007000
+V0
+V  DELETE V.VENKEY.GDG PURGE /* IF WE GIVE RETENTION PERIOD              0007100
+V0
+V/*                                                                      0008000
+V0
+V//                                                                      0009000
+V0
+VMEMBER NAME  GDGUPDAT
+V//***** JCL TO CHANGE GDG DETALS USIING IDCAMS ******                   0000100
+V1
+V//IBMUSERP JOB NOTIFY=&SYSUID                                           0001000
+V0
+V//STEP1    EXEC PGM=IDCAMS                                              0002000
+V0
+V//*                                                                     0003000
+V0
+V//SYSPRINT DD  SYSOUT=*                                                 0004000
+V0
+V//SYSOUT   DD  SYSOUT=*                                                 0005000
+V0
+V//SYSIN    DD  *                                                        0006000
+V0
+V  ALTER V.VENKEY.GDG -                                                  0007000
+V0
+V  LIMIT(4)                                                              0008000
+V0
+V/*                                                                      0009000
+V0
+V//                                                                      0010000
+V0
+VMEMBER NAME  DELTPDS
+V//IBMUSER  JOB NOTIFY=&SYSUID                                           0001000
+V1
+V//STEP1    EXEC  PGM=IDCAMS                                             0002000
+V0
+V//*                                                                     0003000
+V0
+V//DD       DD  DD=V.COBOL.PDS1,DISP=(NEW,CATLG,DELETE),                 0004000
+V1
+V//             DCB=(LRECL=40,BLKSIZE=400,RECFM=FB,DSORG=PS),            0005000
+V0
+V//             SPACE=(TRK,(100,100,20),RLSE),VOL=SER=S7SYS1,            0006000
+V1
+V//             UNIT=SYSDA                                               0007000
+V2
+VMEMBER NAME  GDGGENE
+V//IBMUSERP JOB NOTIFY=IBMUSER                                           0001000
+V0
+V//STEP1    EXEC PGM=IEFBR14                                             0002000
+V0
+V//DD1      DD  DSN=V.VENKEY.GDG(+1),DISP=(NEW,CATLG,DELETE),            0003000
+V0
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),            0004000
+V0
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,                     0005000
+V0
+V//             VOL=SER=S7SYS1                                           0006000
+V0
+VMEMBER NAME  IEBCOPY
+V//IBMUSERP JOB NOTIFY=IBMUSER
+V
+V//STEP1    EXEC PGM=IEBCOPY
+V
+V//DD1      DD  DSN=V.LAB.PDS2,DISP=SHR
+V
+V//DD2      DD  DSN=V.LAB.PDS1,DISP=SHR
+V
+V//SYSOUT   DD   SYSOUT=*
+V
+V//SYSPRINT DD  SYSOUT=*
+V
+V//SYSIN    DD  *
+V
+V  COPY INDD=DD1,OUTDD=DD2
+V
+V/*
+V
+V//
+V
+VMEMBER NAME  PSTOPS
+V//IBMUSERP JOB NOTIFY=IBMUSER
+V
+V//*
+V
+V//STEP1    EXEC PGM=IEBGENER
+V
+V//*
+V
+V//SYSUT1   DD  DSN=COBOL.PS1,DISP=SHR
+V
+V//* THAE ABOVE DATA SET IS EXIST AND HAVA DATA *********
+V
+V//SYSUT2   DD  DSN=COBOL.PS3,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=*.SYSUT1,     /* IT IS RFERE BACK CONCEPT
+V
+V//             SPACE=(TRK,(100,100,0),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+V//**** THE ABOVE DATA SET WILL CREATE WHEN JOB SUBMITED USING IEFBR14**
+V
+V//SYSOUT   DD  SYSOUT=*
+V
+V//SYSPRINT DD  SYSOUT=*
+V
+V//SYSIN    DD  *
+V
+V/*
+V
+V//
+V
+VMEMBER NAME  IDCAMS
+V//************ JCL TO CRATE GDG GENERATION ************                 0000100
+V1
+V//IBMUSERP  JOB NOTIFY=&SYSUID                                          0001000
+V0
+V//STEP1     EXEC PGM=IDCAMS                                             0002000
+V0
+V//SYSOUT    DD   SYSOUT=*                                               0003000
+V0
+V//DD1       DD   DSN=V.GDG(+1),DISP=(NEW,CATLG,DELETE),                 0004000
+V0
+V//               DCB=(LRCL=40,BLKSIZE=400,RECFM=FB,DSORG=PS),           0005000
+V0
+V//               SPACE=(TRK,(10,10,0),RLSE),UNIT=SYSDA                  0006000
+V0
+V//* JCL TO GDG BASE ********************************************        0007000
+V2
+V//STEP2    EXEC PGM=IDCAMS                                              0009000
+V2
+V//SYSOUT   DD  DSN=V.GDG.00001V00,DISP=(                                0010000
+V3
+VMEMBER NAME  CONDT
+V//IBMUSERP JOB NOTIFY=IBMUSER,RESTART=STEP5 /*IT WILL RESATRT FROM
+V
+V//                                          /* STEP5
+V
+V//**************************************************************
+V
+V//STEP1    EXEC PGM=IEFBR14
+V
+V//DD       DD  DSN=V.TEMP.PS1,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+V//**************************************************************
+V
+V//STEP2    EXEC PGM=IEFBR14,COND=(0,NE,STEP1)
+V
+V//DD       DD  DSN=V.TEMP.PS2,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,                    I
+V
+V//             VOL=SER=S7SYS1
+V
+V//*****************************************************************
+V
+V//STEP3    EXEC PGM=IEFBR14,COND=(0,EQ,STEP2)
+V
+V//DD       DD  DSN=V.TEMP.PS3,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+V//******************************************************************
+V
+V//STEP4    EXEC PGM=IEFBR14,COND=(0,EQ,STEP3)
+V
+V//DD       DD  DSN=V.TEMP.PS4,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+V//STEP5    EXEC PGM=IEFBR14
+V
+V//DD       DD  DSN=V.TEMP.PS1,DISP=(OLD,DELETE,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+V//************************************************
+V
+V//STEP6    EXEC PGM=IEFBR14
+V
+V//DD       DD  DSN=V.TEMP.PS2,DISP=(OLD,DELETE,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+V//******************************************************
+V
+V//STEP7    EXEC PGM=IEFBR14
+V
+V//DD       DD  DSN=V.TEMP.PS3,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+V//STEP8    EXEC PGM=IEFBR14
+V
+V//DD       DD  DSN=V.VENKEY.PS4,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=(LRECL=40,RECFM=FB,BLKSIZE=400,DSORG=PS),
+V
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,
+V
+V//             VOL=SER=S7SYS1
+V
+VMEMBER NAME  IEBGENER
+V//* IEBGENER FOR                                                        0000100
+V7
+V//IBMUSERP JOB NOTIFY=IBMUSER                                           0001000
+V0
+V//STEP1    EXEC PGM=IEBGENER                                            0002000
+V0
+V//SYSUT1   DD  DSN=V.LAB.PS1,DISP=SHR                                   0003000
+V0
+V//SUSUT2   DD  DSN=V.LAB.PS6,DISP=(NEW,CATLG,DELETE),                   0004000
+V6
+V//             DCB=(LRECL=40,DSORG=PS,BLKSIZE=400,RECFM=FB),            0004100
+V5
+V//             SPACE=(TRK,(10,10),RLSE),UNIT=SYSDA,                     0004200
+V5
+V//             VOL=SER=S7SYS1                                           0004300
+V5
+V//SYSPRINT DD  SYSOUT=*                                                 0005000
+V0
+V//SYSOUT   DD  SYSOUT=*                                                 0006000
+V0
+V//SYSIN    DD  *                                                        0007000
+V4
+V/*                                                                      0008000
+V4
+VMEMBER NAME  SORT
+V//IBMUSERP JOB NOTIFY=IBMUSER
+V
+V//STEP1    EXEC PGM=SORT
+V
+V//**
+V
+V//DD       DD  DSN=V.VENKEY.PS1,DISP=SHR
+V
+V//DD       DD  DSN=V.VENKEY.PS2,DISP=SHR
+V
+V//SYSOUT   DD  SYSOUT=*
+V
+V//SYSPRINT DD  SYSOUT=*
+V
+V//SYSIN    DD  *
+V
+V//********************************************************************
+V
+V//*EXAMPLE DATA STRUCTRE       * DATA EXAMPLE
+V
+V//* FD AGENT-FILE              * AGENT-ID SATTE-CODE PRDCODE SALSAMT
+V
+V//*  01 AGENT-REC              * A001      AP        P1      1000000
+V
+V//*   02 AGENT-ID PIC X(4).    * A002      TS        P2      2500000
+V
+V//*   02 FILLER   PIC X(1).    * A003      KA        P3      1500000
+V
+V//*   02 STATE-CODE PIC X(2).  * A001      AP        P1      3500000
+V
+V//*   02 FILLER PIC X(1).      * A004      MH        P5      1200000
+V
+V//*   02 PRODUCT-CODE PIC X(2).* A002      TS        P2      4500000
+V
+V//*   02 FILLER PIC X(1).      * A003      KA        P3      5500000
+V
+V//*   02 SALES-AMT PIC 9(5)V99.
+V
+V//*********************************************************************
+V
+V//*   02 FILLER    PIC X(1).
+V
+V//************ SORT UTILITY TO SORT FILE DATA *******************
+V
+V  SORT FIELDS=COPY /* TO COPY ALL RECORDS TO O/P FILE
+V
+V/* THE ABOVE COMMAND FULLY COPY DATA FROM PS1 TO PS2
+V
+V/********
+V
+V  SORT FILEDS=(1,4,CH,A) /* 1 SOURCE FIELDS SATRTING POSITION
+V
+V                         /* 4 LENGTH OF SOURCE FIELD
+V
+V                         /* CH - USED FOR NUMARIC
+V
+V                         /* A - FOR ASENDING ORDER
+V
+V  SORT FIELDS=COPY
+V
+V  INCLUDE COND=(6,2,CH,EQ,C'KA') /* 6 STARTING POSITION OF FIELD
+V
+V                                 /* 2 LENGTH OF  FIELD
+V
+V                                 /* CH -USED FOR NUMARIC
+V
+V                                 /* EQ - EUEL TO (NE,GT,LT,GE,LE)
+V
+V                                 /* C - CHARACTER DONT USE FOR INTE
+V
+V                                 /* C- OR COPY
+V
+V  SORT FIELDS=COPY
+V
+V  OMIT COND=(6,2,CH,EQ,C'KA')    /* 6 STARTING POSITION OG FIELD
+V
+V                                 /* 2 LENGTH OF  FIELD
+V
+V                                  /* CH -USED FOR NUMARIC
+V
+V  SORT FIELDS=COPY
+V
+V  INCLUDE COND=((9,2,CH,EQ,C'P2'),AND,(12,7,ZD,GT,2500000))
+V
+V//****** COPY SLECTED FIELDS USING SKIPREC AND STOPAFT****
+V
+V  SORT FIELDS=COPY
+V
+V  SKIPREC=4  /*IT WILL SKIP FIRST 4 RECORDS
+V
+V  STOPAFT=3  /*IT WILL COPY 3 RECORDS AFTER 4 AND STOP COPYING
+V
+V//*****OUTREC FIELDS IS USED TO COPY PARTICULAR FIELDS FROM I/P
+V
+V//*    PS TO OUTPUT FILE USING OUTREC COMMANDS *******
+V
+V  SORT FIELDS=COPY
+V
+V  OUTREC FIELDS=(1:1,4,6:9,2)  /* 1 OUTPUT FILE STARTING POINT
+V
+V                               /* 1 INPUT FIELD STARTING POINT
+V
+V                               /* 4 LENGTH OF FIELDS
+V
+V                               /* 6 SECOND OUTPUT FIELD STARTING POINT
+V
+V                               /* 9 SECOND I/P FIELD STATING POINT
+V
+V                               /* 2 LENGTH OF SECOND FIELD
+V
+V  SORT FIELDS=COPY
+V
+V  OUTREC FIELDS=(1,4,9,2) /* 1 INPUT STARTING POSITION OF I/P
+V
+V                         /* 4 LENGTH
+V
+V                         /* 9 INPUT STARTING POINT
+V
+V                         /* 2 LENGTH
+V
+V  SORT FIELDS=COPY
+V
+V  OUTREC FIELDS=(1,4,4,X,9,2) /* X DEFINE SPACE
+V
+VMEMBER NAME  IEFBR14
+V//IBMUSERP JOB NOTIFY=&SYSUID   /* JOB CARD MANDATORY
+V
+V//*
+V
+V//* IEFBR14 IS FOR CREATE,DELETE,CATLAG,UNCATLG OF NONVSAM FILES
+V
+V//* LIKE PS,PDS,LIBRARY
+V
+V//*
+V
+V//STEP1    EXEC PGM=IEFBR14
+V
+V//DD1      DD  DSN=V.COBOL.PROGRAMS.PS,DISP=(NEW,CATLG,DELETE),
+V
+V//             SPACE=(TRK,(100,100),RLSE),UNIT=SYSDA,
+V
+V//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=800,DSORG=PS),
+V
+V//             VOLUME=SER=S7SYS1
+V
+V//SYSPRINT DD  SYSOUT=*
+V
+V//SYSOUT   DD  SYSOUT=*
+V
+V//SYSIN    DD  *
+V
+V/*
+V
+V//
+V
+VMEMBER NAME  IEBPTPCH
+V//IBMUSERP JOB NOTIFY=IBMUSER
+V
+V//STEP1    EXEC PGM=IEBPTPCH
+V
+V//SYSUT1   DD  DSN=V.JCL.PDS,DISP=SHR
+V
+V//SYSUT2   DD  DSN=V.JCL.PS1,DISP=(NEW,CATLG,DELETE),
+V
+V//             DCB=(LRECL=80,RECFM=FB,BLKSIZE=0,DSORG=PS),
+V
+V//             SPACE=(TRK,(100,100,0),RLSE),UNIT=SYSDA,
+V
+V//             VOLUME=SER=S7SYS1
+V
+V//SYSPRINT DD  SYSOUT=*
+V
+V//SYSOUT   DD  SYSOUT=*
+V
+V//SYSIN    DD  *
+V
+V  PUNCH TYPORG=PO,MAXFLDS=1
+V
+V//*ECORD FIELD=(80)
+V
+V/*
+V
+V//
+V
+
