@@ -1,0 +1,724 @@
+VMEMBER NAME  CURSOR1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. CURSOR1.
+V
+V       ENVIRONMENT DIVISION.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V            EXEC SQL
+V
+V            INCLUDE SQLCA
+V
+V            END-EXEC.
+V
+V            EXEC SQL
+V
+V            INCLUDE M1
+V
+V            END-EXEC.
+V
+V            EXEC SQL
+V
+V            DECLARE CUR1 CURSOR FOR
+V
+V            SELECT EID,ENAME FROM EMPL
+V
+V            END-EXEC.
+V
+V       PROCEDURE DIVISION.
+V
+V             EXEC SQL
+V
+V             OPEN CUR1
+V
+V             END-EXEC.
+V
+V             PERFORM UNTIL SQLCODE = 100
+V
+V             EXEC SQL
+V
+V             FETCH CUR1 INTO :HV-EID,:HV-ENAME
+V
+V             END-EXEC
+V
+V             EVALUATE SQLCODE
+V
+V             WHEN 0
+V
+V             DISPLAY HV-EID ',' HV-ENAME
+V
+V             WHEN 100
+V
+V             DISPLAY " END"
+V
+V             WHEN OTHER
+V
+V             MOVE 100 TO SQLCODE
+V
+V             END-EVALUATE
+V
+V             END-PERFORM.
+V
+V             EXEC SQL
+V
+V             CLOSE CUR1
+V
+V             END-EXEC.
+V
+V             STOP RUN.
+V
+VMEMBER NAME  INSERT2
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. INSERT2.
+V
+V       ENVIRONMENT DIVISION.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       77 I PIC 9(2) VALUE 1.
+V
+V       77 J PIC 9(2).
+V
+V       01 WS-EID PIC 9(5).
+V
+V           EXEC SQL
+V
+V           INCLUDE SQLCA
+V
+V           END-EXEC.
+V
+V           EXEC SQL
+V
+V           INCLUDE M1
+V
+V           END-EXEC.
+V
+V       PROCEDURE DIVISION.
+V
+V      *    PERFORM 2 TIMES
+V
+V           ACCEPT WS-EID
+V
+V           MOVE WS-EID TO HV-EID
+V
+V           ACCEPT HV-ENAME
+V
+V           EXEC SQL
+V
+V           INSERT INTO EMPL VALUES(:HV-EID,:HV-ENAME)
+V
+V           END-EXEC
+V
+V           EVALUATE SQLCODE
+V
+V           WHEN 0
+V
+V           DISPLAY "SUCESS"
+V
+V           WHEN OTHER
+V
+V           DISPLAY "FAIL"
+V
+V           END-EVALUATE.
+V
+V      *    END-PERFORM.
+V
+V           STOP RUN.
+V
+VMEMBER NAME  READ1
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. READ1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V             EXEC SQL
+V
+V             INCLUDE SQLCA
+V
+V             END-EXEC.
+V
+V             EXEC SQL
+V
+V             INCLUDE M1
+V
+V             END-EXEC.
+V
+V       PROCEDURE DIVISION.
+V
+V             EXEC SQL
+V
+V             SELECT EID,ENAME INTO :HV-EID,:HV-ENAME FROM EMPL
+V
+V             END-EXEC.
+V
+V             IF HV-EID = 000010001
+V
+V             DISPLAY HV-EID  ',' HV-ENAME
+V
+V             ELSE
+V
+V              DISPLAY "NOTFOUND"
+V
+V              END-IF.
+V
+V              STOP RUN.
+V
+VMEMBER NAME  XPLAN
+V//IBMUSERX JOB NOTIFY=&SYSUID,REGION=0M                                 0001000
+V0
+V//*                                                                     0002000
+V0
+V//*                                                                     0003000
+V0
+V//*  BIND DBRM DIRECTLY INTO A PLAN                                     0004000
+V0
+V//*                                                                     0005000
+V0
+V//*                                                                     0006000
+V0
+V//JOBLIB   DD DISP=SHR,DSN=DSN810.SDSNEXIT                              0007000
+V0
+V//         DD DISP=SHR,DSN=DSN810.SDSNLOAD                              0008000
+V0
+V//         DD DISP=SHR,DSN=CEE.SCEERUN                                  0009000
+V0
+V//*                                                                     0010000
+V0
+V//BINDPLAN EXEC PGM=IKJEFT01,DYNAMNBR=20                                0011000
+V0
+V//DBRMLIB  DD DSN=V.COBOL.DB2.DBRMLIB,DISP=SHR /*CHANGE TO YOUR DBRMLIB 0012000
+V1
+V//SYSTSPRT DD SYSOUT=*                                                  0013000
+V0
+V//SYSPRINT DD SYSOUT=*                                                  0014000
+V0
+V//SYSUDUMP DD SYSOUT=*                                                  0015000
+V0
+V//SYSOUT   DD SYSOUT=*                                                  0016000
+V0
+V//SYSTSIN  DD *                                                         0017000
+V0
+V DSN SYSTEM(DB8G)                                                       0018000
+V0
+V BIND PLAN(PL7)        -                                                0019000
+V8
+V      MEMBER(CURSOR1)    -                                              0020000
+V8
+V      ACT(REP)         -                                                0021000
+V0
+V      ENCODING(EBCDIC) -                                                0022000
+V0
+V      VALIDATE(BIND)   -                                                0023000
+V0
+V      ISOLATION(CS)                                                     0024000
+V0
+V END                                                                    0025000
+V0
+V/*                                                                      0026000
+V0
+V//* CHANGE ABC TO YOUR PLAN NAME.                                       0027000
+V0
+V//* CHANGE XYZ TO YOUR DBRM NAME I.E. PROGRAM NAME                      0028000
+V0
+VMEMBER NAME  XDB2RUNJ
+V//IBMUSERX JOB NOTIFY=&SYSUID,REGION=0M                                 0000100
+V0
+V//*                                                                     0000200
+V0
+V//*                                                                     0000300
+V0
+V//*        BIND DBRM INTO PLAN                                          0000400
+V0
+V//*                                                                     0000500
+V0
+V//*                                                                     0000600
+V0
+V//JOBLIB   DD DISP=SHR,DSN=DSN810.SDSNEXIT                              0001000
+V0
+V//         DD DISP=SHR,DSN=DSN810.SDSNLOAD                              0002000
+V0
+V//         DD DISP=SHR,DSN=CEE.SCEERUN                                  0003000
+V0
+V//*                                                                     0004100
+V0
+V//STEP1    EXEC PGM=IKJEFT01,DYNAMNBR=20                                0005000
+V0
+V//SYSTSPRT DD SYSOUT=*                                                  0007000
+V0
+V//SYSPRINT DD SYSOUT=*                                                  0009000
+V0
+V//SYSUDUMP DD SYSOUT=*                                                  0010000
+V0
+V//SYSOUT   DD SYSOUT=*                                                  0011000
+V0
+V//SYSOUT   DD DSN=V.DB2TOPS.PS,DISP=SHR                                 0011011
+V1
+V//SYSTSIN DD *                                                          0011100
+V0
+V DSN SYSTEM(DB8G)                                                       0011200
+V0
+V   RUN  PROGRAM(CURSOR1) PLAN(PL7) -                                    0011300
+V9
+V        LIB('V.COBOL.DB2.LIBRARY')                                      0011400
+V1
+V END                                                                    0011500
+V0
+V/*                                                                      0012000
+V0
+V//                                                                      0012410
+V6
+V//                                                                      0012500
+V5
+V//* CHANGE XYZ TO YOUR PROGRAM NAME                                     0013000
+V0
+V//* CHANGE ABC TO YOUR PLAN NAME                                        0014000
+V0
+V//* CHANGE JJJ.KKK.LLL TO YOUR LOAD LIBRARY NAME                        0015000
+V0
+VMEMBER NAME  XCOBDB2
+V//IBMUSERX JOB NOTIFY=&SYSUID,REGION=0M                                 0001000
+V0
+V//*                                                                     0002000
+V0
+V//*  COBOL DB2 COMPILER                                                 0003000
+V0
+V//*  PRECOMPILE + COMPILE + LINKEDIT                                    0004000
+V0
+V//*  AFTER COMPLETION OF THIS JCL, EXECUTE ONE OF THE BELOW 2 METHODS   0005000
+V0
+V//*  METHOD1:  XPKG + XPKGPLAN                                          0006000
+V0
+V//*  METHOD2:  XPLAN                                                    0007000
+V0
+V//*                                                                     0008000
+V0
+V//PROC1 PROC SRCLIB=,                                                   0009000
+V0
+V//           DB2COPY=,                                                  0010000
+V0
+V//           DBRMLIB=,                                                  0011000
+V0
+V//           LOADLIB=,                                                  0012000
+V0
+V//           PGMNAME=                                                   0013000
+V0
+V//*                                                                     0014000
+V0
+V//*     PRECOMPILE                                                      0015000
+V0
+V//*                                                                     0016000
+V0
+V//PC      EXEC PGM=DSNHPC,PARM='HOST(IBMCOB),SOURCE'                    0017000
+V1
+V//STEPLIB  DD  DISP=SHR,DSN=DSN810.SDSNEXIT                             0018000
+V0
+V//         DD  DISP=SHR,DSN=DSN810.SDSNLOAD                             0019000
+V0
+V//SYSPRINT DD  SYSOUT=*                                                 0020000
+V0
+V//SYSTERM  DD  SYSOUT=*                                                 0021000
+V0
+V//SYSUDUMP DD  SYSOUT=*                                                 0022000
+V0
+V//SYSUT1   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0023000
+V0
+V//SYSUT2   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0024000
+V0
+V//*                                                                     0025000
+V0
+V//SYSIN    DD  DSN=&SRCLIB(&PGMNAME),DISP=SHR                           0026000
+V0
+V//SYSLIB   DD  DSN=&DB2COPY,DISP=SHR                                    0027000
+V0
+V//DBRMLIB  DD  DSN=&DBRMLIB(&PGMNAME),DISP=SHR                          0028000
+V0
+V//SYSCIN   DD  DSN=&&DSNHOUT,DISP=(MOD,PASS),UNIT=SYSDA,                0029000
+V0
+V//             SPACE=(800,(500,500))                                    0030000
+V0
+V//*                                                                     0031000
+V0
+V//*     COMPILE                                                         0032000
+V0
+V//*                                                                     0033000
+V0
+V//COB     EXEC PGM=IGYCRCTL,PARM=(LIB,LIST),COND=(4,LT,PC)              0034000
+V1
+V//SYSIN    DD  DSN=&&DSNHOUT,DISP=(OLD,DELETE)                          0035000
+V0
+V//SYSLIB   DD  DSN=GDDM.SADMSAM,DISP=SHR                                0036000
+V0
+V//SYSLIN   DD  DSN=&&LOADSET,DISP=(MOD,PASS),UNIT=SYSDA,                0037000
+V0
+V//             SPACE=(800,(500,500))                                    0038000
+V0
+V//SYSPRINT DD  SYSOUT=*                                                 0039000
+V0
+V//SYSUDUMP DD  SYSOUT=*                                                 0040000
+V0
+V//SYSUT1   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0041000
+V0
+V//SYSUT2   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0042000
+V0
+V//SYSUT3   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0043000
+V0
+V//SYSUT4   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0044000
+V0
+V//SYSUT5   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0045000
+V0
+V//SYSUT6   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0046000
+V0
+V//SYSUT7   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0047000
+V0
+V//*                                                                     0048000
+V0
+V//*     LINK EDIT                                                       0049000
+V0
+V//*                                                                     0050000
+V0
+V//LKED    EXEC PGM=IEWL,PARM='XREF',                                    0051000
+V0
+V//             COND=((4,LT,COB),(4,LT,PC))                              0052000
+V0
+V//SYSLIB   DD  DSN=&LOADLIB,DISP=SHR                                    0053000
+V0
+V//         DD  DISP=SHR,DSN=DSN810.SDSNLOAD                             0054000
+V0
+V//         DD  DISP=SHR,DSN=ISP.SISPLOAD                                0055000
+V0
+V//         DD  DISP=SHR,DSN=GDDM.SADMMOD                                0056000
+V0
+V//         DD  DISP=SHR,DSN=CEE.SCEELKED                                0057000
+V0
+V//         DD  DISP=SHR,DSN=CEE.SCEERUN                                 0058000
+V0
+V//SYSLIN   DD  DSN=&&LOADSET,DISP=(OLD,DELETE)                          0059000
+V0
+V//*        DD  DDNAME=SYSIN                                             0060000
+V0
+V//SYSLMOD DD DSN=&LOADLIB(&PGMNAME),DISP=SHR                            0061000
+V0
+V//SYSPRINT DD  SYSOUT=*                                                 0062000
+V0
+V//SYSUDUMP DD  SYSOUT=*                                                 0063000
+V0
+V//SYSUT1   DD  SPACE=(TRK,(5,2),RLSE),UNIT=SYSDA                        0064000
+V0
+V//*                                                                     0065000
+V0
+V//PROC1 PEND                                                            0066000
+V0
+V//*                                                                     0067000
+V0
+V//*                                          CHANGE TO YOUR LIBRARIES   0068000
+V0
+V//STEP1 EXEC PROC1,                                                     0069000
+V0
+V//       SRCLIB=V.COBOL.DB2.PDS,             COBOL DB2 SOURCE LIB       0070000
+V2
+V//      DB2COPY=V.COBOL.DB2.DCLLIB,          DCLGEN COPYLIB             0071000
+V2
+V//      DBRMLIB=V.COBOL.DB2.DBRMLIB,          DBRM LIB                  0072000
+V3
+V//      LOADLIB=V.COBOL.DB2.LIBRARY,         DB2 LOADLIB                0073000
+V2
+V//      PGMNAME=UNLOAD1                  PROGRAM NAME                   0074001
+V1
+VMEMBER NAME  UNLOAD1
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. UNLOAD1.                                             0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       INPUT-OUTPUT SECTION.                                            0004000
+V0
+V       FILE-CONTROL.                                                    0005000
+V0
+V            SELECT EMP-FILE ASSIGN TO DISK1                             0006000
+V2
+V            ORGANIZATION IS SEQUENTIAL                                  0007000
+V2
+V            ACCESS MODE IS SEQUENTIAL                                   0008000
+V2
+V            FILE STATUS IS FS.                                          0009000
+V0
+V        DATA DIVISION.                                                  0010000
+V0
+V        FILE SECTION.                                                   0011000
+V0
+V        FD EMP-FILE.                                                    0012000
+V2
+V        01 EMP-REC.                                                     0013000
+V2
+V         02 EID1 PIC 9(5).                                              0014000
+V1
+V         02 FILLER PIC X(1).                                            0015000
+V1
+V         02 ENAME1 PIC X(15).                                           0016000
+V1
+V         02 FILLER PIC X(1).                                            0017000
+V1
+V        WORKING-STORAGE SECTION.                                        0018000
+V1
+V        01 FS PIC 9(2).                                                 0019000
+V1
+V        01 I PIC 9(2).                                                  0020000
+V1
+V                EXEC SQL                                                0020100
+V1
+V                INCLUDE SQLCA                                           0020200
+V1
+V                END-EXEC.                                               0020300
+V1
+V                EXEC SQL                                                0020400
+V1
+V                INCLUDE M1                                              0020500
+V1
+V                END-EXEC.                                               0020600
+V1
+V                EXEC SQL                                                0020700
+V1
+V                DECLARE CUR2 CURSOR FOR                                 0020800
+V1
+V                SELECT EID,ENAME FROM EMPL33                            0020900
+V1
+V                END-EXEC.                                               0020910
+V1
+V        PROCEDURE DIVISION.                                             0021000
+V1
+V                 EXEC SQL                                               0021100
+V1
+V                 OPEN CUR2                                              0021200
+V1
+V                 END-EXEC.                                              0021300
+V1
+V                 OPEN OUTPUT EMP-FILE                                   0021310
+V3
+V                 DISPLAY FS.                                            0021320
+V3
+V                 PERFORM UNTIL SQLCODE = 100                            0021400
+V1
+V                 EXEC SQL                                               0021500
+V1
+V                 FETCH CUR2 INTO  :HV-EID,:HV-ENAME                     0021600
+V1
+V                 END-EXEC.                                              0021700
+V1
+V                 EVALUATE SQLCODE                                       0021800
+V1
+V                 WHEN 0                                                 0021900
+V1
+V                 PERFORM WRITE-PARA                                     0021910
+V1
+V                 WHEN 100                                               0021920
+V1
+V                 DISPLAY "END"                                          0021930
+V1
+V                 WHEN OTHER                                             0021940
+V1
+V                 MOVE 100 TO SQLCODE                                    0021950
+V1
+V                 END-EVALUATE                                           0021960
+V1
+V                 END-PERFORM.                                           0021970
+V1
+V                 PERFORM CLOSE-PARA                                     0021980
+V1
+V                 EXEC SQL                                               0021990
+V1
+V                 CLOSE CUR2                                             0022000
+V1
+V                 END-EXEC.                                              0023000
+V1
+V                 STOP RUN.                                              0024000
+V1
+V      OPEN-PARA.                                                        0025000
+V1
+V              OPEN OUTPUT EMP-FILE                                      0026000
+V1
+V              DISPLAY FS.                                               0027000
+V1
+V      WRITE-PARA.                                                       0028000
+V1
+V              MOVE HV-EID TO EID1                                       0029000
+V1
+V              MOVE HV-ENAME TO ENAME1.                                  0030000
+V1
+V      CLOSE-PARA.                                                       0031000
+V1
+V              CLOSE EMP-FILE.                                           0032000
+V1
+V              DISPLAY FS.                                               0033000
+V1
+VMEMBER NAME  NULLIND
+V       IDENTIFICATION DIVISION.                                         0001000
+V0
+V       PROGRAM-ID. NULLIND.                                             0002000
+V0
+V       ENVIRONMENT DIVISION.                                            0003000
+V0
+V       DATA DIVISION.                                                   0004000
+V0
+V       WORKING STORAGE SECTION.                                         0005000
+V0
+V             EXEC SQL                                                   0006000
+V0
+V             INCLUDE M1                                                 0007000
+V0
+V             END-EXEC.                                                  0008000
+V0
+V             EXEC SQL                                                   0009000
+V0
+V             INCLUDE SQLCA                                              0010000
+V0
+V             END-EXEC.                                                  0011000
+V0
+V             EXEC SQL                                                   0012000
+V0
+V             DECLARE CUR1 CURSOR FOR                                    0013000
+V0
+V             SLECT EID,ENAME FROM EMPL33                                0014000
+V0
+V             END-EXEC.                                                  0015000
+V0
+V       PROCEDURE DIVISION.                                              0016000
+V0
+V              EXEC SQL                                                  0017000
+V0
+V              OPEN CUR1                                                 0018000
+V0
+V              END-EXEC.                                                 0019000
+V0
+V              PERFORM UNTIL SQLCODE = 100                               0019100
+V0
+V              EXEC SQL                                                  0020000
+V0
+V               FETCH CUR1 INTO :HV-EID,:HV-ENAME :WS-IND                0021000
+V0
+V               END-EXEC                                                 0022000
+V0
+V               EVALUATE SQLCODE                                         0023000
+V0
+V               WHEN 0                                                   0024000
+V0
+V               IF WS-IND = 0                                            0024100
+V0
+V                DISPLAY HV-EID HV-ENAME                                 0025000
+V0
+V                ELSE IF WS-IND = -1                                     0026000
+V0
+V                 DISPLAY "NO NULL"                                      0027000
+V0
+V                 END-IF                                                 0028000
+V0
+V                 END-IF                                                 0029000
+V0
+V               WHEN 100                                                 0030000
+V0
+V                DISPLAY "END OF TABLE"                                  0031000
+V0
+V                WHEN OTHER                                              0032000
+V0
+V                 MOVE 100 TO SQLCODE                                    0033000
+V0
+V               END-EVALUATE                                             0034000
+V0
+V               END-PERFORM.                                             0035000
+V0
+V                EXEC SQL                                                0036000
+V0
+V                CLOSE CUR1                                              0037000
+V0
+V                END-EXEC.                                               0038000
+V0
+V                STOP RUN.                                               0039000
+V0
+VMEMBER NAME  OWNCOB
+V//                                                                      0001000
+V0
+VMEMBER NAME  INSERT1
+V      ************************************************************
+V
+V      * THIS PROGRAM TO INSTER VALUES IN ALREADY CRETED
+V
+V      * TABLE , THAT TABL IS CRAETED THROUGH SPUFI
+V
+V      *******************************************************
+V
+V       IDENTIFICATION DIVISION.
+V
+V       PROGRAM-ID. INSERT1.
+V
+V       DATA DIVISION.
+V
+V       WORKING-STORAGE SECTION.
+V
+V       77 I PIC 9(2).
+V
+V       77 J PIC 9(2).
+V
+V      *******************************************************
+V
+V      * THIS BELOW DECLARATION IS FOR CALING SQLCA
+V
+V      * SQLCA CONSIST OF SQLCODE AND SQL(3),THIS IS A PREDEFINED
+V
+V      * VARIABLE LIKE COPY BOOK
+V
+V      * ******************************************************
+V
+V             EXEC SQL
+V
+V             INCLUDE SQLCA
+V
+V             END-EXEC.
+V
+V             EXEC SQL
+V
+V             INCLUDE M1
+V
+V             END-EXEC.
+V
+V       PROCEDURE DIVISION.
+V
+V             MOVE 10001 TO HV-EID
+V
+V             MOVE 'COBOL'  TO HV-ENAME
+V
+V             EXEC SQL
+V
+V             INSERT INTO EMPL VALUES(:HV-EID,:HV-ENAME)
+V
+V             END-EXEC.
+V
+V             IF SQLCODE = 0
+V
+V             DISPLAY "SUCESS"
+V
+V             ELSE
+V
+V              DISPLAY "FAIL"
+V
+V              END-IF.
+V
+V              STOP RUN.
+V
+VMEMBER NAME  OWNXCOB
+V//IBMUSERP JOB  NOTIFY=&SYSUID                                          0001000
+V0
+V//PRECOMP  EXEC PGM=DSNHPC                                              0002000
+V0
+V//STEPLIB                                                               0003000
+V0
+
